@@ -3,13 +3,26 @@ using SendGrid.Helpers.Mail;
 
 var apiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
 var client = new SendGridClient(apiKey);
+
+Console.Write("To: ");
+var toEmail = Console.ReadLine();
+
+Console.Write("Subject: ");
+var subject = Console.ReadLine();
+
+Console.Write("Body: ");
+var body = Console.ReadLine();
+
+
 var msg = new SendGridMessage()
 {
     From = new EmailAddress("ahmedalirezk5050@gmail.com", "ahmed ali"),
-    Subject = "Sending with Twilio SendGrid is Fun",
-    PlainTextContent = "and easy to do anywhere, especially with C#"
+    Subject = subject,
+    PlainTextContent = body
 };
-msg.AddTo(new EmailAddress("practisedev5050@gmail.com", "practise dev"));
+
+
+msg.AddTo(new EmailAddress(toEmail));
 var response = await client.SendEmailAsync(msg);
 
 // A success status code means SendGrid received the email request and will process it.
