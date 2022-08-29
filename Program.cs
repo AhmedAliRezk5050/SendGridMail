@@ -3,8 +3,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SendGrid;
 using SendGrid.Helpers.Mail;
+using SendGrid.Extensions.DependencyInjection;
 
-using IHost host = Host.CreateDefaultBuilder(args).Build();
+using IHost host = Host.CreateDefaultBuilder(args)
+                       .ConfigureServices((context, services) =>
+                            services.AddSendGrid(options =>
+                                    options.ApiKey =
+                                    context.Configuration.GetValue<string>("SendGridApiKey"))
+                            ).Build();
+
 var config = host.Services.GetRequiredService<IConfiguration>();
 
 var apiKey = config.GetValue<string>("SendGridApiKey");
@@ -23,7 +30,7 @@ var subject = Console.ReadLine();
 Console.Write("Body: ");
 var body = Console.ReadLine();
 
-var client = new SendGridClient(apiKey);
+var client = host.Services.GetRequiredService<ISendGridClient>();
 var msg = new SendGridMessage()
 {
     From = new EmailAddress(fromEmail, fromName),
